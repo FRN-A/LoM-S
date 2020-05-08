@@ -26,15 +26,9 @@ public class GameManager : MonoBehaviour
 
     public void ChangeCam()
     {
-        if (cam1.activeSelf)
-        {
-            cam1.SetActive(false);
-            cam2.SetActive(true);
-        }
-        else
-        {
-            cam1.SetActive(true);
-            cam2.SetActive(false);
-        }
+
+        cam1.SetActive(!cam1.activeSelf);
+        cam2.SetActive(!cam2.activeSelf);
+
     }
 }
