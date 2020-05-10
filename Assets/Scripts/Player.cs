@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class Player : MonoBehaviour
 {
@@ -19,6 +20,13 @@ public class Player : MonoBehaviour
     bool carrying = false;
     [SerializeField, Range(0.1f, 15f)]
     float throwForce;
+    [SerializeField]
+    int lifes;
+    
+    public int Lifes{ 
+        get => lifes; 
+        set => lifes = value; 
+    }
 
     private void Update()
     {
@@ -40,7 +48,8 @@ public class Player : MonoBehaviour
                 if (Physics.Raycast(transform.position, transform.forward, out hit, 1000, tablesLayer))
                 {
                     Vector3 table = hit.transform.position + new Vector3(0,hit.transform.localScale.y / 2 + pickedGameObject.transform.localScale.y / 2,0);
-                    StartCoroutine(MoveToTable(pickedGameObject, table));
+                    StartCoroutine(GameManager.instance.MoveToPoint(pickedGameObject, table, throwForce));
+                    hit.collider.gameObject.GetComponent<Table>().ServeFood();
                     carrying = false;
                     pickedGameObject = null;
                 }
@@ -48,6 +57,7 @@ public class Player : MonoBehaviour
                 {
                     //pickedGameObject.GetComponent<Rigidbody>().detectCollisions = true;
                     pickedGameObject.GetComponent<Rigidbody>().velocity = (transform.forward + Vector3.up) * throwForce;
+                    StartCoroutine(GameManager.instance.FadeOut(pickedGameObject));
                     pickedGameObject = null;
                     carrying = false;
                 }
@@ -67,18 +77,6 @@ public class Player : MonoBehaviour
         if (Axis != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(Axis.normalized);
-        }
-    }
-
-    IEnumerator MoveToTable(GameObject food, Vector3 table)
-    {
-        food.GetComponent<Rigidbody>().isKinematic = true;
-        while (Vector3.Distance(food.transform.position, table) > 0.01f)
-        {
-            float step = throwForce * Time.deltaTime;
-            food.transform.position = Vector3.MoveTowards(food.transform.position, table, step);
-            Debug.Log(food.transform.position);
-            yield return null;
         }
     }
 
