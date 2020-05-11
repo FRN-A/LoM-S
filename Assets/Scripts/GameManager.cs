@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
@@ -22,6 +23,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     public Player player;
+    [SerializeField]
+    public Text txt_lifes;
 
     private void Awake()
     {
@@ -38,6 +41,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        txt_lifes.text = $"{player.Lifes}";
         StartCoroutine(Orders());
     }
 

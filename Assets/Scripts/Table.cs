@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Table : MonoBehaviour
 {
@@ -14,13 +15,18 @@ public class Table : MonoBehaviour
         set => available = value;
     }
 
-    Vector3 screenPos;
-
     private void Awake()
     {
         available = true;
         order = null;
     }
+
+    [SerializeField]
+    GameObject canvas;
+    [SerializeField]
+    Text txt_food;
+    [SerializeField]
+    public Image timer;
 
     public void NewOrder()
     {
@@ -28,17 +34,11 @@ public class Table : MonoBehaviour
         int time = food * 3;
         order = new Order(food, time, this);
         available = false;
-        screenPos = Camera.main.WorldToScreenPoint(transform.position);
         StartCoroutine(order.TimeToLive());
+        canvas.SetActive(true);
+        txt_food.text = $"{food}";
+        timer.fillAmount = 0.7f;
         Debug.Log($"Nueva orden: quesos:{food}, tiempo:{time}");
-    }
-
-    private void OnGUI()
-    {
-        if(order != null)
-        {
-            GUI.Label(new Rect(screenPos.x, screenPos.y, 200, 30), $"{order.Food}");
-        }
     }
 
     public void ServeFood()
@@ -48,7 +48,7 @@ public class Table : MonoBehaviour
             if (order.Food > 1)
             {
                 order.Food--;
-                Debug.Log("+1 queso");
+                txt_food.text = $"{order.Food}";
             }
             else
             {
@@ -58,7 +58,7 @@ public class Table : MonoBehaviour
         else
         {
             GameManager.instance.player.Lifes--;
-            Debug.Log($"vidas: {GameManager.instance.player.Lifes}");
+            GameManager.instance.txt_lifes.text = $"{GameManager.instance.player.Lifes}";
         }
     }
 
@@ -66,6 +66,7 @@ public class Table : MonoBehaviour
     {
         order = null;
         available = true;
+        canvas.SetActive(false);
         Debug.Log("Orden servida");
     }
 
@@ -74,7 +75,7 @@ public class Table : MonoBehaviour
         order = null;
         available = true;
         GameManager.instance.player.Lifes--;
-        Debug.Log("Se acabó el tiempo");
-        Debug.Log($"vidas: {GameManager.instance.player.Lifes}");
+        GameManager.instance.txt_lifes.text = $"{GameManager.instance.player.Lifes}";
+        canvas.SetActive(false);
     }
 }

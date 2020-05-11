@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Animations;
 
 public class Player : MonoBehaviour
@@ -22,11 +23,12 @@ public class Player : MonoBehaviour
     float throwForce;
     [SerializeField]
     int lifes;
-    
+
     public int Lifes{ 
         get => lifes; 
         set => lifes = value; 
     }
+
 
     private void Update()
     {
