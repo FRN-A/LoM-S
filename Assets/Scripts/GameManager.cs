@@ -44,10 +44,8 @@ public class GameManager : MonoBehaviour
 
     public void ChangeCam()
     {
-
         cam1.SetActive(!cam1.activeSelf);
         cam2.SetActive(!cam2.activeSelf);
-
     }
     public IEnumerator MoveToPoint(GameObject gameObject, Vector3 target, float speed)
     {
