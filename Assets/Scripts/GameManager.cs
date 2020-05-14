@@ -24,7 +24,12 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public Player player;
     [SerializeField]
-    public Text txt_lifes;
+    int lifes;
+    [SerializeField]
+    Text txt_lifes;
+    int score;
+    [SerializeField]
+    Text txt_score;
 
     private void Awake()
     {
@@ -41,8 +46,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        txt_lifes.text = $"{player.Lifes}";
+        txt_lifes.text = $"{lifes}";
+        score = 0;
+        txt_score.text = $"{score}";
         StartCoroutine(Orders());
+        StartCoroutine(FoodStart());
     }
 
 
@@ -81,6 +89,15 @@ public class GameManager : MonoBehaviour
         Instantiate(Food, foodSpawnPoint.position, Quaternion.identity);
     }
 
+    IEnumerator FoodStart()
+    {
+        for(int i=0;i<5;i++)
+        {
+            CreateFood();
+            yield return new WaitForSeconds(4f);
+        }
+    }
+
     IEnumerator Orders()
     {
         while (true)
@@ -97,5 +114,21 @@ public class GameManager : MonoBehaviour
             }
             yield return new WaitForSeconds(5f);
         }
+    }
+
+    public void UpdateLifes(int life)
+    {
+        lifes += life;
+        txt_lifes.text = $"{lifes}";
+        if(lifes <= 0)
+        {
+            //gameOver
+        }
+    }
+
+    public void UpdateScore(int score)
+    {
+        this.score += score;
+        txt_score.text = $"{this.score}";
     }
 }

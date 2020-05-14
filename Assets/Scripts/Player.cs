@@ -21,14 +21,6 @@ public class Player : MonoBehaviour
     bool carrying = false;
     [SerializeField, Range(0.1f, 15f)]
     float throwForce;
-    [SerializeField]
-    int lifes;
-
-    public int Lifes{ 
-        get => lifes; 
-        set => lifes = value; 
-    }
-
 
     private void Update()
     {
@@ -51,7 +43,7 @@ public class Player : MonoBehaviour
                 {
                     Vector3 table = hit.transform.position + new Vector3(0,hit.transform.localScale.y / 2 + pickedGameObject.transform.localScale.y / 2,0);
                     StartCoroutine(GameManager.instance.MoveToPoint(pickedGameObject, table, throwForce));
-                    hit.collider.gameObject.GetComponent<Table>().ServeFood();
+                    hit.collider.gameObject.GetComponent<Table>().ServeFood(pickedGameObject.GetComponent<Food>().Points);
                     carrying = false;
                     pickedGameObject = null;
                 }

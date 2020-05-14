@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Fence
+  - Food
   layers:
   - Default
   - TransparentFX

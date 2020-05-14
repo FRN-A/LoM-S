@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
+    [SerializeField]
+    int points;
+    public int Points { 
+        get => points; 
+        set => points = value; 
+    }
+
     private bool isQuitting = false;
     void OnApplicationQuit()
     {

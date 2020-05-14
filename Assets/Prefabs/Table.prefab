@@ -107,6 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78633b1328a1d3140b461407c5f67cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderTime: 5
   canvas: {fileID: 8002455854534591510}
   txt_food: {fileID: 8002455853587048395}
   timer: {fileID: 7360194096663123885}

@@ -8,6 +8,8 @@ public class Table : MonoBehaviour
 {
     private bool available;
     Order order;
+    [SerializeField]
+    int orderTime;
 
     public bool Available
     {
@@ -31,7 +33,7 @@ public class Table : MonoBehaviour
     public void NewOrder()
     {
         int food = (int)UnityEngine.Random.Range(1f, 6f);
-        int time = food * 3;
+        int time = food * orderTime;
         order = new Order(food, time, this);
         available = false;
         StartCoroutine(order.TimeToLive());
@@ -41,10 +43,11 @@ public class Table : MonoBehaviour
         Debug.Log($"Nueva orden: quesos:{food}, tiempo:{time}");
     }
 
-    public void ServeFood()
+    public void ServeFood(int points)
     {
         if (!available)
         {
+            GameManager.instance.UpdateScore(points);
             if (order.Food > 1)
             {
                 order.Food--;
@@ -57,13 +60,13 @@ public class Table : MonoBehaviour
         }
         else
         {
-            GameManager.instance.player.Lifes--;
-            GameManager.instance.txt_lifes.text = $"{GameManager.instance.player.Lifes}";
+            GameManager.instance.UpdateLifes(-1);
         }
     }
 
     void EndOrder()
     {
+        GameManager.instance.UpdateScore(30);
         order = null;
         available = true;
         canvas.SetActive(false);
@@ -74,8 +77,7 @@ public class Table : MonoBehaviour
     {
         order = null;
         available = true;
-        GameManager.instance.player.Lifes--;
-        GameManager.instance.txt_lifes.text = $"{GameManager.instance.player.Lifes}";
+        GameManager.instance.UpdateLifes(-1);
         canvas.SetActive(false);
     }
 }
