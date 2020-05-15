@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     bool carrying = false;
     [SerializeField, Range(0.1f, 15f)]
     float throwForce;
+    [SerializeField, Range(0f, 1f)]
+    float desfaseY;
 
     private void Update()
     {
@@ -41,7 +43,7 @@ public class Player : MonoBehaviour
             {
                 if (Physics.Raycast(transform.position, transform.forward, out hit, 1000, tablesLayer))
                 {
-                    Vector3 table = hit.transform.position + new Vector3(0,hit.transform.localScale.y / 2 + pickedGameObject.transform.localScale.y / 2,0);
+                    Vector3 table = hit.transform.position + new Vector3(0, desfaseY, 0);
                     StartCoroutine(GameManager.instance.MoveToPoint(pickedGameObject, table, throwForce));
                     hit.collider.gameObject.GetComponent<Table>().ServeFood(pickedGameObject.GetComponent<Food>().Points);
                     carrying = false;

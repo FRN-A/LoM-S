@@ -9,16 +9,6 @@ public class PauseMenu : MonoBehaviour
     bool paused = false;
     [SerializeField]
     GameObject pauseMenu;
-    [SerializeField]
-    Button btnResume;
-    [SerializeField]
-    Button btnMain;
-
-    void Awake()
-    {
-        btnResume.onClick.AddListener(togglePause);
-        btnMain.onClick.AddListener(LoadMenu);
-    }
 
     void Update()
     {
@@ -40,12 +30,5 @@ public class PauseMenu : MonoBehaviour
             Time.timeScale = 0f;
             paused = true;
         }
-    }
-
-    void LoadMenu()
-    {
-        pauseMenu.SetActive(false);
-        //Main menu
-        SceneManager.LoadScene(1);
     }
 }

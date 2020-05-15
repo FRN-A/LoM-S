@@ -15,7 +15,11 @@ public class Order
     int time;
     Table table;
     float elapsedTime;
-
+    float currentTime;
+    public float CurrentTime
+    {
+        get => currentTime;
+    }
     public Order(int food, int time, Table table)
     {
         this.food = food;
@@ -25,7 +29,7 @@ public class Order
 
     public IEnumerator TimeToLive()
     {
-        float currentTime = time;
+        currentTime = time;
         table.timer.color = new Color(1f, 1f, 1f);
         while (currentTime > time * 0.4)
         {

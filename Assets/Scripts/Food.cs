@@ -18,7 +18,7 @@ public class Food : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (!isQuitting) {
+        if (!isQuitting && !GameManager.instance.gameOver) {
             GameManager.instance.CreateFood();
         }
     }

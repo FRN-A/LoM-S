@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public Player player;
     [SerializeField]
+    Transform playerResetPosition;
+    [SerializeField]
+    int lifesAmount;
     int lifes;
     [SerializeField]
     Text txt_lifes;
@@ -31,28 +35,42 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Text txt_score;
 
+    [SerializeField]
+    Image blkImage;
+    [SerializeField]
+    Text gameOverImage;
+    [SerializeField]
+    Text txtGameOver;
+    public bool gameOver;
+
+
     private void Awake()
     {
-        if (!instance)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
+        instance = this;
     }
 
     private void Start()
     {
+        lifes = lifesAmount;
         txt_lifes.text = $"{lifes}";
         score = 0;
         txt_score.text = $"{score}";
         StartCoroutine(Orders());
         StartCoroutine(FoodStart());
+        gameOver = false;
     }
 
+    private void Update()
+    {
+        if (gameOver)
+        {
+            if(Input.GetButtonDown("Jump"))
+            {
+                Reset();
+                SceneManager.LoadScene("Level01");
+            }
+        }
+    }
 
     public void ChangeCam()
     {
@@ -84,6 +102,17 @@ public class GameManager : MonoBehaviour
         Destroy(gameObject);
     }
 
+    IEnumerator FadeIn(MaskableGraphic element)
+    {
+        for (double i = 0; i <= 1; i += 0.1)
+        {
+            Color tmp = element.color;
+            tmp.a = (float)i;
+            element.color = tmp;
+            yield return new WaitForSecondsRealtime(0.05f);
+        }
+    }
+
     public void CreateFood()
     {
         Instantiate(Food, foodSpawnPoint.position, Quaternion.identity);
@@ -110,6 +139,7 @@ public class GameManager : MonoBehaviour
                     {
                         table.NewOrder();
                     }
+                    yield return new WaitForSeconds(2f);
                 }
             }
             yield return new WaitForSeconds(5f);
@@ -122,7 +152,7 @@ public class GameManager : MonoBehaviour
         txt_lifes.text = $"{lifes}";
         if(lifes <= 0)
         {
-            //gameOver
+            GameOver();
         }
     }
 
@@ -130,5 +160,23 @@ public class GameManager : MonoBehaviour
     {
         this.score += score;
         txt_score.text = $"{this.score}";
+    }
+
+    void GameOver()
+    {
+        gameOver = true;
+        blkImage.gameObject.SetActive(true);
+        StartCoroutine(FadeIn(blkImage));
+        StartCoroutine(FadeIn(gameOverImage));
+        StartCoroutine(FadeIn(txtGameOver));
+        Time.timeScale = 0f;
+    }
+
+    private void Reset()
+    {
+        lifes = lifesAmount;
+        score = 0;
+        player.transform.position = playerResetPosition.position;
+        Time.timeScale = 1f;
     }
 }
