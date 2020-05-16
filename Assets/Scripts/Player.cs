@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Animations;
+using Platform2DUtils.GameplaySystem;
 
 public class Player : MonoBehaviour
 {
@@ -32,22 +33,15 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        Debug.DrawRay(transform.position, transform.forward * maxDistance, Color.yellow);
-        Debug.DrawRay(transform.position, transform.forward * 1000, Color.red);
-        if (Input.GetButtonDown("Jump"))
-        {
+        if (Input.GetButtonDown("PickUp")) { 
             if (!carrying)
             {
-                if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance, foodLayer))
-                {
-                    //anim.SetTrigger("PickUp");
-                    pickedGameObject = hit.collider.gameObject;
-                    pickedGameObject.GetComponent<Rigidbody>().detectCollisions = false;
-                    carrying = true;
-                }
+                pickedGameObject = GameplaySystem.PickUp(this.gameObject, maxDistance, foodLayer, pickUpPosition.position);
+                carrying = pickedGameObject != null;
             }
             else
             {
+                SoundManager.instance.ThrowFood();
                 anim.SetTrigger("Throw");
                 if (Physics.Raycast(transform.position, transform.forward, out hit, 1000, tablesLayer))
                 {
@@ -55,36 +49,28 @@ public class Player : MonoBehaviour
                     StartCoroutine(GameManager.instance.MoveToPoint(pickedGameObject, table, throwForce));
                     hit.collider.gameObject.GetComponent<Table>().ServeFood(pickedGameObject.GetComponent<Food>().Points);
                     carrying = false;
+                    pickedGameObject.transform.parent = null;
                     pickedGameObject = null;
                 }
                 else
                 {
-                    pickedGameObject.GetComponent<Rigidbody>().velocity = (transform.forward + Vector3.up) * throwForce;
+                    GameplaySystem.Throw(transform, pickedGameObject, throwForce);
                     StartCoroutine(GameManager.instance.FadeOut(pickedGameObject));
-                    pickedGameObject = null;
                     carrying = false;
+                    pickedGameObject = null;
                 }
             }
-        }
-
-        if (carrying)
-        {
-            pickedGameObject.transform.position = pickUpPosition.position;
         }
     }
 
     void FixedUpdate()
     {
-        transform.Translate(Axis.normalized.magnitude * Vector3.forward * moveSpeed * Time.deltaTime);
-        if (Axis != Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(Axis.normalized);
-        }
+        GameplaySystem.MoveTopdown3D(transform, moveSpeed);
     }
 
     private void LateUpdate()
     {
-        anim.SetFloat("Walking", Mathf.Abs(Axis.normalized.magnitude));
+        anim.SetFloat("Walking", Mathf.Abs(GameplaySystem.Axis3.normalized.magnitude));
     }
 
     private void OnTriggerEnter(Collider other)
@@ -101,11 +87,6 @@ public class Player : MonoBehaviour
         {
             GameManager.instance.ChangeCam();
         }
-    }
-
-    Vector3 Axis
-    {
-        get => new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
     }
 }
 

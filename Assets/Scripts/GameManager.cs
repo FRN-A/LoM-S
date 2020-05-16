@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Text txtGameOver;
     public bool gameOver;
+    [SerializeField]
+    GameObject tutorial;
 
 
     private void Awake()
@@ -58,6 +60,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Orders());
         StartCoroutine(FoodStart());
         gameOver = false;
+        Time.timeScale = 0;
     }
 
     private void Update()
@@ -68,6 +71,14 @@ public class GameManager : MonoBehaviour
             {
                 Reset();
                 SceneManager.LoadScene("Level01");
+            }
+        }
+        if (tutorial.activeSelf)
+        {
+            if (Input.GetButtonDown("Jump"))
+            {
+                Time.timeScale = 1;
+                tutorial.SetActive(false);
             }
         }
     }
@@ -131,18 +142,18 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            foreach (Table table in tables)
+            for (int i = 0; i < tables.Length; ++i)
             {
-                if (table.Available)
+                if (tables[i].Available)
                 {
                     if (Random.value < 0.5)
                     {
-                        table.NewOrder();
+                        tables[i].NewOrder();
                     }
-                    yield return new WaitForSeconds(2f);
+                    yield return new WaitForSeconds(1f);
                 }
             }
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(4f);
         }
     }
 
@@ -177,6 +188,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(FadeIn(gameOverImage));
         StartCoroutine(FadeIn(txtGameOver));
         Time.timeScale = 0f;
+        SoundManager.instance.GameOver();
     }
 
     private void Reset()

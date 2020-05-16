@@ -24,6 +24,9 @@ public class Table : MonoBehaviour
     [SerializeField]
     public Image timer;
 
+    [SerializeField]
+    GameObject alert;
+
     IEnumerator timeToLive;
 
     private void Awake()
@@ -43,7 +46,8 @@ public class Table : MonoBehaviour
         canvas.SetActive(true);
         txt_food.text = $"{food}";
         timer.fillAmount = 0.7f;
-        Debug.Log($"Nueva orden: quesos:{food}, tiempo:{time}");
+        SoundManager.instance.NewOrder();
+        alert.SetActive(true);
     }
 
     public void ServeFood(int points)
@@ -66,6 +70,7 @@ public class Table : MonoBehaviour
         else
         {
             GameManager.instance.UpdateLifes(-1);
+            SoundManager.instance.Fail();
         }
     }
 
@@ -79,7 +84,7 @@ public class Table : MonoBehaviour
             timeToLive = null;
             available = true;
             canvas.SetActive(false);
-            Debug.Log("Orden servida");
+            alert.SetActive(false);
         }
     }
 
@@ -92,6 +97,8 @@ public class Table : MonoBehaviour
             available = true;
             GameManager.instance.UpdateLifes(-1);
             canvas.SetActive(false);
+            SoundManager.instance.Fail();
+            alert.SetActive(false);
         }
     }
 }
