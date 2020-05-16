@@ -23,6 +23,12 @@ public class Player : MonoBehaviour
     float throwForce;
     [SerializeField, Range(0f, 1f)]
     float desfaseY;
+    Animator anim;
+
+    private void Awake()
+    {
+        anim = GetComponentInChildren<Animator>();
+    }
 
     private void Update()
     {
@@ -34,6 +40,7 @@ public class Player : MonoBehaviour
             {
                 if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance, foodLayer))
                 {
+                    //anim.SetTrigger("PickUp");
                     pickedGameObject = hit.collider.gameObject;
                     pickedGameObject.GetComponent<Rigidbody>().detectCollisions = false;
                     carrying = true;
@@ -41,6 +48,7 @@ public class Player : MonoBehaviour
             }
             else
             {
+                anim.SetTrigger("Throw");
                 if (Physics.Raycast(transform.position, transform.forward, out hit, 1000, tablesLayer))
                 {
                     Vector3 table = hit.transform.position + new Vector3(0, desfaseY, 0);
@@ -51,7 +59,6 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    //pickedGameObject.GetComponent<Rigidbody>().detectCollisions = true;
                     pickedGameObject.GetComponent<Rigidbody>().velocity = (transform.forward + Vector3.up) * throwForce;
                     StartCoroutine(GameManager.instance.FadeOut(pickedGameObject));
                     pickedGameObject = null;
@@ -69,11 +76,15 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         transform.Translate(Axis.normalized.magnitude * Vector3.forward * moveSpeed * Time.deltaTime);
-
         if (Axis != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(Axis.normalized);
         }
+    }
+
+    private void LateUpdate()
+    {
+        anim.SetFloat("Walking", Mathf.Abs(Axis.normalized.magnitude));
     }
 
     private void OnTriggerEnter(Collider other)

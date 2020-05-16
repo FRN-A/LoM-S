@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Image blkImage;
     [SerializeField]
-    Text gameOverImage;
+    Image gameOverImage;
     [SerializeField]
     Text txtGameOver;
     public bool gameOver;
@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
     {
         if (gameOver)
         {
-            if(Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump"))
             {
                 Reset();
                 SceneManager.LoadScene("Level01");
@@ -104,10 +104,10 @@ public class GameManager : MonoBehaviour
 
     IEnumerator FadeIn(MaskableGraphic element)
     {
-        for (double i = 0; i <= 1; i += 0.1)
+        for (float i = 0; i <= 1; i += 0.1f)
         {
             Color tmp = element.color;
-            tmp.a = (float)i;
+            tmp.a = i;
             element.color = tmp;
             yield return new WaitForSecondsRealtime(0.05f);
         }
@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator FoodStart()
     {
-        for(int i=0;i<5;i++)
+        for (int i = 0; i < 5; i++)
         {
             CreateFood();
             yield return new WaitForSeconds(4f);
@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            foreach(Table table in tables)
+            foreach (Table table in tables)
             {
                 if (table.Available)
                 {
@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour
     {
         lifes += life;
         txt_lifes.text = $"{lifes}";
-        if(lifes <= 0)
+        if (lifes <= 0)
         {
             GameOver();
         }
@@ -162,9 +162,16 @@ public class GameManager : MonoBehaviour
         txt_score.text = $"{this.score}";
     }
 
+    IEnumerator WaitForGameOver()
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+        gameOver = true;
+    
+    }
+
     void GameOver()
     {
-        gameOver = true;
+        StartCoroutine(WaitForGameOver());
         blkImage.gameObject.SetActive(true);
         StartCoroutine(FadeIn(blkImage));
         StartCoroutine(FadeIn(gameOverImage));
@@ -173,10 +180,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void Reset()
-    {
-        lifes = lifesAmount;
-        score = 0;
-        player.transform.position = playerResetPosition.position;
+    { 
         Time.timeScale = 1f;
     }
 }
